@@ -1,0 +1,3 @@
+suites:
+    affiliate:
+        spec_path: tests
