@@ -1,0 +1,20 @@
+{
+    "name": "cerbero/affiliate",
+    "description": "",
+    "authors": [
+        {
+            "name": "Andrea Marco Sartori",
+            "email": "andrea.marco.sartori@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "4.2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cerbero\\Affiliate\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
