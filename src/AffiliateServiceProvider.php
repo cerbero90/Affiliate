@@ -12,12 +12,6 @@ class AffiliateServiceProvider extends ServiceProvider {
 	protected $defer = false;
 
 	/**
-	 * @author	Andrea Marco Sartori
-	 * @var		array	$affiliations	List of supported affiliations.
-	 */
-	protected $affiliations = ['TradeDoubler'];
-
-	/**
 	 * Bootstrap the application events.
 	 *
 	 * @return void
@@ -34,14 +28,13 @@ class AffiliateServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->registerParserFactory();
-
 		$this->registerCollector();
 
-		foreach ($this->affiliations as $affiliation)
-		{
-			$this->registerAffiliation($affiliation);
-		}
+		$this->registerParserFactory();
+
+		$this->registerTradeDoubler();
+
+		$this->registerZanox();
 
 		$this->registerManager();
 	}
@@ -73,21 +66,43 @@ class AffiliateServiceProvider extends ServiceProvider {
 	}
 
 	/**
-	 * Register the given affiliation.
+	 * Register TradeDoubler.
 	 *
 	 * @author	Andrea Marco Sartori
-	 * @param	string	$affiliation
 	 * @return	void
 	 */
-	private function registerAffiliation($name)
+	private function registerTradeDoubler()
 	{
-		$lower = strtolower($name);
-
-		$this->app->bindShared("cerbero.affiliate.affiliations.{$lower}", function($app) use($name)
+		$this->app->bindShared("cerbero.affiliate.affiliations.tradedoubler", function($app)
 		{
-			$affiliation = $app->make("Cerbero\Affiliate\Affiliations\\{$name}");
+			$affiliation = $app->make("Cerbero\Affiliate\Affiliations\TradeDoubler");
 
-			$config = $app['config']["affiliate::{$name}"];
+			$config = $app['config']["affiliate::TradeDoubler"];
+
+			$affiliation->setConfig($config);
+
+			return $affiliation;
+		});
+	}
+
+	/**
+	 * Register Zanox.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @return	void
+	 */
+	private function registerZanox()
+	{
+		$this->app->bindShared("cerbero.affiliate.affiliations.zanox", function($app)
+		{
+			$affiliation = new Affiliations\Zanox
+			(
+				$app['Cerbero\Affiliate\Collectors\CollectorInterface'],
+
+				\Zanox\ApiClient::factory()
+			);
+
+			$config = $app['config']["affiliate::Zanox"];
 
 			$affiliation->setConfig($config);
 
@@ -119,6 +134,7 @@ class AffiliateServiceProvider extends ServiceProvider {
 		return array(
 			'cerbero.affiliate.manager',
 			'cerbero.affiliate.affiliations.tradedoubler',
+			'cerbero.affiliate.affiliations.zanox',
 		);
 	}
 
