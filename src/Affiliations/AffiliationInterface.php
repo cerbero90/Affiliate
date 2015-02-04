@@ -17,23 +17,6 @@ interface AffiliationInterface
 	public function name();
 
 	/**
-	 * Set the base URL to call the APIs.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @param	string	$url
-	 * @return	void
-	 */
-	public function setBaseUrl($url);
-
-	/**
-	 * Retrieve the base URL to call the APIs.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @return	string
-	 */
-	public function getBaseUrl();
-
-	/**
 	 * Set the configuration.
 	 *
 	 * @author	Andrea Marco Sartori

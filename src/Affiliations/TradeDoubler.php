@@ -2,6 +2,7 @@
 
 use Cerbero\Affiliate\Collectors\CollectorInterface;
 use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
+use Cerbero\Date;
 
 /**
  * TradeDoubler affiliation.
@@ -10,6 +11,12 @@ use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
  */
 class TradeDoubler extends AbstractAffiliation
 {
+
+	/**
+	 * @author	Andrea Marco Sartori
+	 * @var		Cerbero\Affiliate\Parsers\ParserFactoryInterface	$parser	Parser factory.
+	 */
+	protected $parser;
 
 	/**
 	 * @author	Andrea Marco Sartori
@@ -29,7 +36,9 @@ class TradeDoubler extends AbstractAffiliation
 	 */
 	public function __construct(ParserFactoryInterface $parser, CollectorInterface $collector)
 	{
-		parent::__construct($parser, $collector);
+		parent::__construct($collector);
+
+		$this->parser = $parser;
 
 		$this->parser->setChild('row');
 	}
@@ -47,14 +56,16 @@ class TradeDoubler extends AbstractAffiliation
 	{
 		$default = [
 			'reportName' => 'aAffiliateEventBreakdownReport',
-			'startDate'  => $this->formatDate($start, 'd/m/y'),
-			'endDate'    => $this->formatDate($end, 'd/m/y'),
-			'event_id'   => self::LEADS,
+			'startDate'  => Date::format($start, 'd/m/y'),
+			'endDate'    => Date::format($end, 'd/m/y'),
+			'event_id'   => static::LEADS,
 		];
 
 		$url = $this->buildUrl($default, $data);
 
-		return $this->getResultsByUrl($url);
+		$results = $this->parser->createByInput($url)->parse();
+
+		return $this->getCollectionOfResults($results);
 	}
 
 	/**
