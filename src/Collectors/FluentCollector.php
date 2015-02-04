@@ -21,9 +21,9 @@ class FluentCollector extends AbstractCollector
 	{
 		$this->checkData($data);
 
-		$filtered = array_filter((array) $data);
+		$attributes = $this->getAttributesByData($data);
 
-		return new Fluent($filtered);
+		return new Fluent($attributes);
 	}
 
 	/**
@@ -35,10 +35,26 @@ class FluentCollector extends AbstractCollector
 	 */
 	private function checkData($data)
 	{
+		$message = 'The collector should collect arrays or objects only.';
+
 		if( ! is_array($data) && ! is_object($data))
 		{
-			throw new \InvalidArgumentException("The collector should collect arrays or objects only.");
+			throw new \InvalidArgumentException($message);
 		}
+	}
+
+	/**
+	 * Retrieve attributes by manipulating data.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @param	mixed	$data
+	 * @return	array
+	 */
+	private function getAttributesByData($data)
+	{
+		$encoded = json_encode($data);
+
+		return json_decode($encoded, true);
 	}
 
 }

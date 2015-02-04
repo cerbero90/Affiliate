@@ -44,4 +44,15 @@ class AffiliateManager extends Manager
 		return $this->app->make('cerbero.affiliate.affiliations.tradedoubler');
 	}
 
+	/**
+	 * Create an instance of the Zanox affiliation.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @return	Cerbero\Affiliate\Affiliations\AffiliateInterface
+	 */
+	protected function createZanoxDriver()
+	{
+		return $this->app->make('cerbero.affiliate.affiliations.zanox');
+	}
+
 }

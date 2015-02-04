@@ -35,30 +35,6 @@ class TradeDoublerSpec extends ObjectBehavior
     }
 
     /**
-     * @testdox	It returns the base URL to call APIs.
-     *
-     * @author	Andrea Marco Sartori
-     * @return	void
-     */
-    public function it_returns_the_base_URL_to_call_APIs()
-    {
-    	$this->getBaseUrl()->shouldReturn('https://publisher.tradedoubler.com/pan/aReport3Key.action');
-    }
-
-    /**
-     * @testdox	It sets the base URL to call.
-     *
-     * @author	Andrea Marco Sartori
-     * @return	void
-     */
-    public function it_sets_the_base_URL_to_call()
-    {
-    	$this->setBaseUrl('foo');
-
-    	$this->getBaseUrl()->shouldReturn('foo');
-    }
-
-    /**
      * @testdox	It sets and retrieves the configuration.
      *
      * @author	Andrea Marco Sartori
