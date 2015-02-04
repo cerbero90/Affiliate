@@ -13,6 +13,12 @@ class TradeDoubler extends AbstractAffiliation
 
 	/**
 	 * @author	Andrea Marco Sartori
+	 * @var		Cerbero\Affiliate\Parsers\ParserFactoryInterface	$parser	Parser factory.
+	 */
+	protected $parser;
+
+	/**
+	 * @author	Andrea Marco Sartori
 	 * @var		string	$baseUrl	Base URL to call APIs.
 	 */
 	protected $baseUrl = 'https://publisher.tradedoubler.com/pan/aReport3Key.action';
@@ -29,7 +35,9 @@ class TradeDoubler extends AbstractAffiliation
 	 */
 	public function __construct(ParserFactoryInterface $parser, CollectorInterface $collector)
 	{
-		parent::__construct($parser, $collector);
+		parent::__construct($collector);
+
+		$this->parser = $parser;
 
 		$this->parser->setChild('row');
 	}
