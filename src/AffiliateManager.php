@@ -55,4 +55,15 @@ class AffiliateManager extends Manager
 		return $this->app->make('cerbero.affiliate.affiliations.zanox');
 	}
 
+	/**
+	 * Create an instance of the TradeTracker affiliation.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @return	Cerbero\Affiliate\Affiliations\AffiliateInterface
+	 */
+	protected function createTradeTrackerDriver()
+	{
+		return $this->app->make('cerbero.affiliate.affiliations.tradetracker');
+	}
+
 }

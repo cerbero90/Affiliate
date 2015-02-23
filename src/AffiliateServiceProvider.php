@@ -9,7 +9,7 @@ class AffiliateServiceProvider extends ServiceProvider {
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
 	/**
 	 * Bootstrap the application events.
@@ -35,6 +35,8 @@ class AffiliateServiceProvider extends ServiceProvider {
 		$this->registerTradeDoubler();
 
 		$this->registerZanox();
+
+		$this->registerTradeTracker();
 
 		$this->registerManager();
 	}
@@ -111,6 +113,26 @@ class AffiliateServiceProvider extends ServiceProvider {
 	}
 
 	/**
+	 * Register TradeTracker.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @return	void
+	 */
+	private function registerTradeTracker()
+	{
+		$this->app->bindShared("cerbero.affiliate.affiliations.tradetracker", function($app)
+		{
+			$affiliation = $app->make("Cerbero\Affiliate\Affiliations\TradeTracker");
+
+			$config = $app['config']["affiliate::TradeTracker"];
+
+			$affiliation->setConfig($config);
+
+			return $affiliation;
+		});
+	}
+
+	/**
 	 * Register the manager of the affiliations.
 	 *
 	 * @author	Andrea Marco Sartori
@@ -135,6 +157,7 @@ class AffiliateServiceProvider extends ServiceProvider {
 			'cerbero.affiliate.manager',
 			'cerbero.affiliate.affiliations.tradedoubler',
 			'cerbero.affiliate.affiliations.zanox',
+			'cerbero.affiliate.affiliations.tradetracker',
 		);
 	}
 
