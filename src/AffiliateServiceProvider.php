@@ -28,15 +28,15 @@ class AffiliateServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->registerCollector();
-
 		$this->registerParserFactory();
 
-		$this->registerTradeDoubler();
+		$this->registerAffiliation('TradeDoubler');
 
 		$this->registerZanox();
 
-		$this->registerTradeTracker();
+		$this->registerAffiliation('TradeTracker');
+
+		$this->registerAffiliation('ClickPoint');
 
 		$this->registerManager();
 	}
@@ -55,31 +55,20 @@ class AffiliateServiceProvider extends ServiceProvider {
 	}
 
 	/**
-	 * Register the collector.
+	 * Register a given affiliation.
 	 *
 	 * @author	Andrea Marco Sartori
 	 * @return	void
 	 */
-	private function registerCollector()
+	private function registerAffiliation($name)
 	{
-		$collector = 'Cerbero\Affiliate\Collectors\FluentCollector';
+		$alias = 'cerbero.affiliate.affiliations.' . strtolower($name);
 
-		$this->app->bind('Cerbero\Affiliate\Collectors\CollectorInterface', $collector);
-	}
-
-	/**
-	 * Register TradeDoubler.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @return	void
-	 */
-	private function registerTradeDoubler()
-	{
-		$this->app->bindShared("cerbero.affiliate.affiliations.tradedoubler", function($app)
+		$this->app->bindShared($alias, function($app) use($name)
 		{
-			$affiliation = $app->make("Cerbero\Affiliate\Affiliations\TradeDoubler");
+			$affiliation = $app["Cerbero\Affiliate\Affiliations\\{$name}"];
 
-			$config = $app['config']["affiliate::TradeDoubler"];
+			$config = $app['config']["affiliate::{$name}"];
 
 			$affiliation->setConfig($config);
 
@@ -95,41 +84,12 @@ class AffiliateServiceProvider extends ServiceProvider {
 	 */
 	private function registerZanox()
 	{
-		$this->app->bindShared("cerbero.affiliate.affiliations.zanox", function($app)
+		$this->app->bind('Zanox\Api\Adapter\Methods20110301Interface', function()
 		{
-			$affiliation = new Affiliations\Zanox
-			(
-				$app['Cerbero\Affiliate\Collectors\CollectorInterface'],
-
-				\Zanox\ApiClient::factory()
-			);
-
-			$config = $app['config']["affiliate::Zanox"];
-
-			$affiliation->setConfig($config);
-
-			return $affiliation;
+			return \Zanox\ApiClient::factory();
 		});
-	}
 
-	/**
-	 * Register TradeTracker.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @return	void
-	 */
-	private function registerTradeTracker()
-	{
-		$this->app->bindShared("cerbero.affiliate.affiliations.tradetracker", function($app)
-		{
-			$affiliation = $app->make("Cerbero\Affiliate\Affiliations\TradeTracker");
-
-			$config = $app['config']["affiliate::TradeTracker"];
-
-			$affiliation->setConfig($config);
-
-			return $affiliation;
-		});
+		$this->registerAffiliation('Zanox');
 	}
 
 	/**
@@ -158,6 +118,7 @@ class AffiliateServiceProvider extends ServiceProvider {
 			'cerbero.affiliate.affiliations.tradedoubler',
 			'cerbero.affiliate.affiliations.zanox',
 			'cerbero.affiliate.affiliations.tradetracker',
+			'cerbero.affiliate.affiliations.clickpoint',
 		);
 	}
 
