@@ -1,6 +1,5 @@
 <?php namespace Cerbero\Affiliate\Affiliations;
 
-use Cerbero\Affiliate\Collectors\CollectorInterface;
 use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
 use Cerbero\Date;
 
@@ -31,12 +30,8 @@ class TradeDoubler extends AbstractAffiliation
 	 *
 	 * @author	Andrea Marco Sartori
 	 * @param	Cerbero\Affiliate\Parsers\ParserFactoryInterface	$parser
-	 * @param	Cerbero\Affiliate\Collectors\CollectorInterface		$collector
-	 * @return	void
+	 * @var		array	$queries	Default queries to append to every call.
 	 */
-	public function __construct(ParserFactoryInterface $parser, CollectorInterface $collector)
-	{
-		parent::__construct($collector);
 
 		$this->parser = $parser;
 

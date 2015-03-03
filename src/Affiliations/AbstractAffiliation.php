@@ -1,6 +1,6 @@
 <?php namespace Cerbero\Affiliate\Affiliations;
 
-use Cerbero\Affiliate\Collectors\CollectorInterface;
+use Illuminate\Support\Collection;
 
 /**
  * Abstract implementation of an affiliation.
@@ -12,27 +12,9 @@ abstract class AbstractAffiliation implements AffiliationInterface
 
 	/**
 	 * @author	Andrea Marco Sartori
-	 * @var		Cerbero\Affiliate\Collectors\CollectorInterface	$collector	Results collector.
-	 */
-	protected $collector;
-
-	/**
-	 * @author	Andrea Marco Sartori
 	 * @var		array	$config	Configuration.
 	 */
 	protected $config;
-	
-	/**
-	 * Set the dependencies.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @param	Cerbero\Affiliate\Collectors\CollectorInterface		$collector
-	 * @return	void
-	 */
-	public function __construct(CollectorInterface $collector)
-	{
-		$this->collector = $collector;
-	}
 
 	/**
 	 * Retrieve the name of the affiliation.
@@ -90,9 +72,7 @@ abstract class AbstractAffiliation implements AffiliationInterface
 	 */
 	protected function getCollectionOfResults(array $results)
 	{
-		$this->collector->collect($results);
-
-		return $this->collector->getCollection();
+		return Collection::make($results);
 	}
 
 }

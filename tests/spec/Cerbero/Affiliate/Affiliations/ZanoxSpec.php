@@ -5,15 +5,14 @@ namespace spec\Cerbero\Affiliate\Affiliations;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
-use Cerbero\Affiliate\Collectors\CollectorInterface;
 use Zanox\Api\Adapter\Methods20110301Interface;
 use StdClass;
 
 class ZanoxSpec extends ObjectBehavior
 {
-	function let(CollectorInterface $collector, ZanoxClient $client)
+	function let(ZanoxClient $client)
 	{
-		$this->beConstructedWith($collector, $client);
+		$this->beConstructedWith($client);
 	}
 
     function it_is_initializable()
@@ -59,17 +58,17 @@ class ZanoxSpec extends ObjectBehavior
      * @author	Andrea Marco Sartori
      * @return	void
      */
-    public function it_retrieves_leads_achieved_in_a_range_of_dates($client, $collector)
+    public function it_retrieves_leads_achieved_in_a_range_of_dates($client)
     {
     	$client->getLeads('2000-01-01', null, null, null, null, 0, 50)->shouldBeCalled()->willReturn($this->lead('foo'));
     	$client->getLeads('2000-01-02', null, null, null, null, 0, 50)->shouldBeCalled()->willReturn($this->lead('bar'));
     	$client->getLeads('2000-01-03', null, null, null, null, 0, 50)->shouldBeCalled()->willReturn($this->lead('baz'));
 
-    	$collector->collect(['foo', 'bar', 'baz'])->shouldBeCalled();
+    	$collection = $this->leadsInDates('2000-01-01', '2000-01-03');
 
-    	$collector->getCollection()->shouldBeCalled()->willReturn('collection');
+        $collection->shouldHaveType('Illuminate\Support\Collection');
 
-    	$this->leadsInDates('2000-01-01', '2000-01-03')->shouldReturn('collection');
+        $collection->all()->shouldReturn(['foo', 'bar', 'baz']);
     }
 
     /**
@@ -94,23 +93,23 @@ class ZanoxSpec extends ObjectBehavior
      * @author	Andrea Marco Sartori
      * @return	void
      */
-    public function it_allows_custom_parameters_when_retrieving_achieved_leads($client, $collector)
+    public function it_allows_custom_parameters_when_retrieving_achieved_leads($client)
     {
     	$client->getLeads('2000-01-01', 'clickDate', null, 123, 'confirmed', 2, 50)->shouldBeCalled()->willReturn($this->lead('foo'));
     	$client->getLeads('2000-01-02', 'clickDate', null, 123, 'confirmed', 2, 50)->shouldBeCalled()->willReturn($this->lead('bar'));
 
-    	$collector->collect(['foo', 'bar'])->shouldBeCalled();
-
-    	$collector->getCollection()->shouldBeCalled()->willReturn('collection');
-
-		$custom = [
+    	$custom = [
 			'dateType'    => 'clickDate',
 			'adspaceId'   => 123,
 			'reviewState' => 'confirmed',
 			'page'        => 2
 		];
 
-    	$this->leadsInDates('2000-01-01', '2000-01-02', $custom)->shouldReturn('collection');
+    	$collection = $this->leadsInDates('2000-01-01', '2000-01-02', $custom);
+
+        $collection->shouldHaveType('Illuminate\Support\Collection');
+
+        $collection->all()->shouldReturn(['foo', 'bar']);
     }
 }
 

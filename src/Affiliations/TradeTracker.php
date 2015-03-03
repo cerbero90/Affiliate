@@ -1,8 +1,8 @@
 <?php namespace Cerbero\Affiliate\Affiliations;
 
 use Cerbero\Date;
+use Illuminate\Support\Collection;
 use Cerbero\Affiliate\Clients\SoapClientFactory;
-use Cerbero\Affiliate\Collectors\CollectorInterface;
 
 /**
  * TradeTracker affiliation.
@@ -21,14 +21,11 @@ class TradeTracker extends AbstractAffiliation {
 	 * Set the dependencies.
 	 *
 	 * @author	Andrea Marco Sartori
-	 * @param	Cerbero\Affiliate\Collectors\CollectorInterface		$collector
 	 * @param	Cerbero\Affiliate\Clients\SoapClientFactory		$client
 	 * @return	void
 	 */
-	public function __construct(CollectorInterface $collector, SoapClientFactory $client)
+	public function __construct(SoapClientFactory $client)
 	{
-		$this->collector = $collector;
-
 		$this->setClient($client);
 	}
 

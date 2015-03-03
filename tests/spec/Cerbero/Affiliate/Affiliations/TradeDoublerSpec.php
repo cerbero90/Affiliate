@@ -5,15 +5,14 @@ namespace spec\Cerbero\Affiliate\Affiliations;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
-use Cerbero\Affiliate\Collectors\CollectorInterface;
 use Cerbero\Affiliate\Parsers\ParserInterface;
 use DateTime;
 
 class TradeDoublerSpec extends ObjectBehavior
 {
-	function let(ParserFactoryInterface $factory, CollectorInterface $collector)
+	function let(ParserFactoryInterface $factory)
 	{
-		$this->beConstructedWith($factory, $collector);
+		$this->beConstructedWith($factory);
 	}
 
     function it_is_initializable()
@@ -55,7 +54,7 @@ class TradeDoublerSpec extends ObjectBehavior
      * @author	Andrea Marco Sartori
      * @return	void
      */
-    public function it_builds_the_URL_to_call_to_get_the_leads_done_in_a_range_of_dates($factory, $collector, ParserInterface $parser)
+    public function it_builds_the_URL_to_call_to_get_the_leads_done_in_a_range_of_dates($factory, ParserInterface $parser)
     {
     	$this->setConfig(['key' => 123, 'affiliateId' => 22]);
 
@@ -63,15 +62,15 @@ class TradeDoublerSpec extends ObjectBehavior
 
     	$parser->parse()->shouldBeCalled()->willReturn($items);
 
-    	$url = 'https://publisher.tradedoubler.com/pan/aReport3Key.action?reportName=aAffiliateEventBreakdownReport&startDate=01%2F12%2F14&endDate=17%2F01%2F15&event_id=4&key=123&affiliateId=22&format=XML';
+    	$url = 'https://publisher.tradedoubler.com/pan/aReport3Key.action?format=XML&key=123&affiliateId=22&reportName=aAffiliateEventBreakdownReport&startDate=01%2F12%2F14&endDate=17%2F01%2F15&event_id=4';
 
     	$factory->createByInput($url)->shouldBeCalled()->willReturn($parser);
 
-    	$collector->collect($items)->shouldBeCalled();
+    	$collection = $this->leadsInDates('2014-12-01', '2015-01-17');
 
-    	$collector->getCollection()->shouldBeCalled()->willReturn('baz');
+        $collection->shouldHaveType('Illuminate\Support\Collection');
 
-    	$this->leadsInDates('2014-12-01', '2015-01-17')->shouldReturn('baz');
+        $collection->all()->shouldReturn($items);
     }
 
     /**
@@ -80,7 +79,7 @@ class TradeDoublerSpec extends ObjectBehavior
      * @author    Andrea Marco Sartori
      * @return    void
      */
-    public function it_can_customize_the_report_of_the_leads_done_in_a_range_of_dates($factory, $collector, ParserInterface $parser)
+    public function it_can_customize_the_report_of_the_leads_done_in_a_range_of_dates($factory, ParserInterface $parser)
     {
         $this->setConfig(['key' => 123, 'affiliateId' => 22]);
 
@@ -88,15 +87,15 @@ class TradeDoublerSpec extends ObjectBehavior
 
         $parser->parse()->shouldBeCalled()->willReturn($items);
 
-        $url = 'https://publisher.tradedoubler.com/pan/aReport3Key.action?reportName=aAffiliateEventBreakdownReport&startDate=01%2F12%2F14&endDate=17%2F01%2F15&event_id=4&key=123&affiliateId=22&format=XML&columns=programId&columns=timeOfEvent';
+        $url = 'https://publisher.tradedoubler.com/pan/aReport3Key.action?format=XML&key=123&affiliateId=22&reportName=aAffiliateEventBreakdownReport&startDate=01%2F12%2F14&endDate=17%2F01%2F15&event_id=4&columns=programId&columns=timeOfEvent';
 
         $factory->createByInput($url)->shouldBeCalled()->willReturn($parser);
 
-        $collector->collect($items)->shouldBeCalled();
+        $collection = $this->leadsInDates('2014-12-01', '2015-01-17', ['columns' => ['programId', 'timeOfEvent'] ]);
 
-        $collector->getCollection()->shouldBeCalled()->willReturn('baz');
+        $collection->shouldHaveType('Illuminate\Support\Collection');
 
-        $this->leadsInDates('2014-12-01', '2015-01-17', ['columns' => ['programId', 'timeOfEvent'] ])->shouldReturn('baz');
+        $collection->all()->shouldReturn($items);
     }
 
     /**
