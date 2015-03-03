@@ -2,16 +2,15 @@
 
 namespace spec\Cerbero\Affiliate\Affiliations;
 
-use Cerbero\Affiliate\Collectors\CollectorInterface;
 use Cerbero\Affiliate\Clients\SoapClientFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class TradeTrackerSpec extends ObjectBehavior
 {
-	function let(CollectorInterface $collector, SoapClientFactory $client, SoapMethodsToCall $soap)
+	function let(SoapClientFactory $client, SoapMethodsToCall $soap)
 	{
-		$this->beConstructedWith($collector, $client);
+		$this->beConstructedWith($client);
 
 		$client->setLocation('http://ws.tradetracker.com/soap/affiliate?wsdl')->shouldBeCalled();
 
@@ -59,7 +58,7 @@ class TradeTrackerSpec extends ObjectBehavior
      * @author    Andrea Marco Sartori
      * @return    void
      */
-    public function it_retrieves_the_leads_achieved_in_a_range_of_dates($soap, $collector)
+    public function it_retrieves_the_leads_achieved_in_a_range_of_dates($soap)
     {
         $this->it_sets_the_configuration($soap);
 
@@ -71,11 +70,11 @@ class TradeTrackerSpec extends ObjectBehavior
 
         $soap->getConversionTransactions(111, $options)->willReturn(['lead']);
 
-        $collector->collect(['lead'])->shouldBeCalled();
+        $collection = $this->leadsInDates('2015-01-01', '2015-02-01');
 
-        $collector->getCollection()->willReturn('foo');
+        $collection->shouldHaveType('Illuminate\Support\Collection');
 
-        $this->leadsInDates('2015-01-01', '2015-02-01')->shouldReturn('foo');
+        $collection->all()->shouldReturn(['lead']);
     }
 
     /**
@@ -84,7 +83,7 @@ class TradeTrackerSpec extends ObjectBehavior
      * @author    Andrea Marco Sartori
      * @return    void
      */
-    public function it_retrieves_the_leads_achieved_in_a_range_of_dates_with_custom_options($soap, $collector)
+    public function it_retrieves_the_leads_achieved_in_a_range_of_dates_with_custom_options($soap)
     {
         $this->it_sets_the_configuration($soap);
 
@@ -97,11 +96,11 @@ class TradeTrackerSpec extends ObjectBehavior
 
         $soap->getConversionTransactions(111, $options)->willReturn(['lead']);
 
-        $collector->collect(['lead'])->shouldBeCalled();
+        $collection = $this->leadsInDates('2015-01-01', '2015-02-01', ['transactionStatus' => 'accepted']);
 
-        $collector->getCollection()->willReturn('foo');
+        $collection->shouldHaveType('Illuminate\Support\Collection');
 
-        $this->leadsInDates('2015-01-01', '2015-02-01', ['transactionStatus' => 'accepted'])->shouldReturn('foo');
+        $collection->all()->shouldReturn(['lead']);
     }
 }
 

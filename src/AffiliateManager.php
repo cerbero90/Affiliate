@@ -66,4 +66,15 @@ class AffiliateManager extends Manager
 		return $this->app->make('cerbero.affiliate.affiliations.tradetracker');
 	}
 
+	/**
+	 * Create an instance of the ClickPoint affiliation.
+	 *
+	 * @author	Andrea Marco Sartori
+	 * @return	Cerbero\Affiliate\Affiliations\AffiliateInterface
+	 */
+	protected function createClickPointDriver()
+	{
+		return $this->app->make('cerbero.affiliate.affiliations.clickpoint');
+	}
+
 }

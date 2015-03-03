@@ -1,8 +1,8 @@
 <?php namespace Cerbero\Affiliate\Affiliations;
 
-use Cerbero\Affiliate\Collectors\CollectorInterface;
-use Zanox\Api\Adapter\Methods20110301Interface as Client;
 use Cerbero\Date;
+use Illuminate\Support\Collection;
+use Zanox\Api\Adapter\Methods20110301Interface as Client;
 
 /**
  * Zanox affiliation.
@@ -22,14 +22,11 @@ class Zanox extends AbstractAffiliation
 	 * Set the dependencies.
 	 *
 	 * @author	Andrea Marco Sartori
-	 * @param	Cerbero\Affiliate\Collectors\CollectorInterface		$collector
 	 * @param	Zanox\Api\Adapter\Methods20110301Interface			$client
 	 * @return	void
 	 */
-	public function __construct(CollectorInterface $collector, Client $client)
+	public function __construct(Client $client)
 	{
-		parent::__construct($collector);
-
 		$this->client = $client;
 	}
 

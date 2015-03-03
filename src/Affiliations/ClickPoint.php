@@ -3,32 +3,23 @@
 use Cerbero\Date;
 
 /**
- * TradeDoubler affiliation.
+ * ClickPoint affiliation.
  *
  * @author	Andrea Marco Sartori
  */
-class TradeDoubler extends AbstractXmlUrlAffiliation
-{
-
-	const LEADS = 4;
+class ClickPoint extends AbstractXmlUrlAffiliation {
 
 	/**
 	 * @author	Andrea Marco Sartori
 	 * @var		string	$baseUrl	Base URL to call APIs.
 	 */
-	protected $baseUrl = 'https://publisher.tradedoubler.com/pan/aReport3Key.action';
+	protected $baseUrl = 'https://feed.clickpoint.com/network-feed';
 
 	/**
 	 * @author	Andrea Marco Sartori
-	 * @var		array	$queries	Default queries to append to every call.
+	 * @var		string	$child	Child elements of XML to grab.
 	 */
-	protected $queries = ['format' => 'XML'];
-
-	/**
-	 * @author	Andrea Marco Sartori
-	 * @var		string	$child	Child element of XML to start from.
-	 */
-	protected $child = 'row';
+	protected $child = 'Transaction';
 
 	/**
 	 * Retrieve the leads achieved in a range of dates.
@@ -43,10 +34,8 @@ class TradeDoubler extends AbstractXmlUrlAffiliation
 	{
 		$options = array_merge(
 		[
-			'reportName' => 'aAffiliateEventBreakdownReport',
-			'startDate'  => Date::format($start, 'd/m/y'),
-			'endDate'    => Date::format($end, 'd/m/y'),
-			'event_id'   => static::LEADS,
+			'fromdate'  => Date::format($start, 'Y-m-d'),
+			'todate'    => Date::format($end, 'Y-m-d'),
 
 		], $data);
 
