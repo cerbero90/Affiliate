@@ -1,6 +1,5 @@
 <?php namespace Cerbero\Affiliate\Affiliations;
 
-use Cerbero\Affiliate\Parsers\ParserFactoryInterface;
 use Cerbero\Date;
 
 /**
@@ -8,14 +7,10 @@ use Cerbero\Date;
  *
  * @author	Andrea Marco Sartori
  */
-class TradeDoubler extends AbstractAffiliation
+class TradeDoubler extends AbstractXmlUrlAffiliation
 {
 
-	/**
-	 * @author	Andrea Marco Sartori
-	 * @var		Cerbero\Affiliate\Parsers\ParserFactoryInterface	$parser	Parser factory.
-	 */
-	protected $parser;
+	const LEADS = 4;
 
 	/**
 	 * @author	Andrea Marco Sartori
@@ -23,20 +18,17 @@ class TradeDoubler extends AbstractAffiliation
 	 */
 	protected $baseUrl = 'https://publisher.tradedoubler.com/pan/aReport3Key.action';
 
-	const LEADS = 4;
-	
 	/**
-	 * Set the dependencies.
-	 *
 	 * @author	Andrea Marco Sartori
-	 * @param	Cerbero\Affiliate\Parsers\ParserFactoryInterface	$parser
 	 * @var		array	$queries	Default queries to append to every call.
 	 */
+	protected $queries = ['format' => 'XML'];
 
-		$this->parser = $parser;
-
-		$this->parser->setChild('row');
-	}
+	/**
+	 * @author	Andrea Marco Sartori
+	 * @var		string	$child	Child element of XML to start from.
+	 */
+	protected $child = 'row';
 
 	/**
 	 * Retrieve the leads achieved in a range of dates.
@@ -49,49 +41,16 @@ class TradeDoubler extends AbstractAffiliation
 	 */
 	public function leadsInDates($start, $end, $data = [])
 	{
-		$default = [
+		$options = array_merge(
+		[
 			'reportName' => 'aAffiliateEventBreakdownReport',
 			'startDate'  => Date::format($start, 'd/m/y'),
 			'endDate'    => Date::format($end, 'd/m/y'),
 			'event_id'   => static::LEADS,
-		];
 
-		$url = $this->buildUrl($default, $data);
+		], $data);
 
-		$results = $this->parser->createByInput($url)->parse();
-
-		return $this->getCollectionOfResults($results);
-	}
-
-	/**
-	 * Build the URL to call.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @param	array	$default
-	 * @param	array	$data
-	 * @return	string
-	 */
-	protected function buildUrl($default, $data = [])
-	{
-		$merged = array_merge($default, $this->appendData(), $data);
-
-		$url = $this->baseUrl . '?' . http_build_query($merged, '', '&');
-
-		// remove [n] added by http_build_query when it deals with arrays
-		return preg_replace('/%5B\d+%5D/', '', $url);
-	}
-
-	/**
-	 * Retrieve mandatory data to append.
-	 *
-	 * @author	Andrea Marco Sartori
-	 * @return	array
-	 */
-	private function appendData()
-	{
-		$config = $this->getConfig();
-
-		return $config + ['format' => 'XML'];
+		return $this->getResultsByOptions($options);
 	}
 
 }
